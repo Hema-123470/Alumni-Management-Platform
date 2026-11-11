@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ alumni_user.get_full_name }} — Profile{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{% url 'alumni_list' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back to Alumni List
+  </a>
+</div>
+
+<div class="row">
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center p-4">
+        {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}" alt="Profile" class="rounded-circle mb-3" style="width:150px;height:150px;object-fit:cover;">
+        {% else %}
+          <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+               style="width:150px;height:150px;font-size:4rem;">
+            {{ alumni_user.first_name|first|upper }}
+          </div>
+        {% endif %}
+        <h4 class="mb-1">{{ alumni_user.get_full_name }}</h4>
+        <p class="text-muted mb-2">{{ alumni_user.email }}</p>
+        {% if profile.designation %}
+          <p class="text-primary fw-semibold mb-1">{{ profile.designation }}</p>
+        {% endif %}
+        {% if profile.current_company %}
+          <p class="text-muted small">@ {{ profile.current_company }}</p>
+        {% endif %}
+        <hr />
+        {% if profile.linkedin_url %}
+          <a href="{{ profile.linkedin_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-linkedin me-1"></i>LinkedIn
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-3">
+      <div class="card-body p-4">
+        <h5 class="border-bottom pb-2 mb-3">
+          <i class="bi bi-person-lines-fill me-2 text-primary"></i>About
+        </h5>
+        {% if profile.bio %}
+          <p class="text-muted">{{ profile.bio }}</p>
+        {% else %}
+          <p class="text-muted fst-italic">No bio provided.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+      <div class="card-body p-4">
+        <h5 class="border-bottom pb-2 mb-3">
+          <i class="bi bi-mortarboard me-2 text-primary"></i>Academic Information
+        </h5>
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <small class="text-muted">Batch Year</small>
+            <div class="fw-semibold">{{ profile.batch_year|default:"—" }}</div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <small class="text-muted">Department</small>
+            <div class="fw-semibold">{{ profile.department|default:"—" }}</div>
+          </div>
+          <div class="col-md-4 mb-2">
+            <small class="text-muted">Degree</small>
+            <div class="fw-semibold">{{ profile.degree|default:"—" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-3">
+      <div class="card-body p-4">
+        <h5 class="border-bottom pb-2 mb-3">
+          <i class="bi bi-briefcase me-2 text-success"></i>Professional Information
+        </h5>
+        <div class="row">
+          <div class="col-md-6 mb-2">
+            <small class="text-muted">Current Company</small>
+            <div class="fw-semibold">{{ profile.current_company|default:"—" }}</div>
+          </div>
+          <div class="col-md-6 mb-2">
+            <small class="text-muted">Designation</small>
+            <div class="fw-semibold">{{ profile.designation|default:"—" }}</div>
+          </div>
+          <div class="col-md-6 mb-2">
+            <small class="text-muted">Industry</small>
+            <div class="fw-semibold">{{ profile.industry|default:"—" }}</div>
+          </div>
+          <div class="col-md-6 mb-2">
+            <small class="text-muted">Location</small>
+            <div class="fw-semibold">
+              {% if profile.city or profile.state %}
+                {{ profile.city }}{% if profile.city and profile.state %}, {% endif %}{{ profile.state }}
+              {% else %}
+                —
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% if profile.skills %}
+          <div class="mt-3">
+            <small class="text-muted d-block mb-2">Skills</small>
+            {% for skill in profile.get_skills_list %}
+              <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} — Job Details{% endblock %}
+{% block nav_jobs %}active{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back to Jobs
+  </a>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm mb-3">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h3 class="mb-1">{{ job.title }}</h3>
+            <h5 class="text-primary mb-0">{{ job.company }}</h5>
+          </div>
+          {% if not job.is_active %}
+            <span class="badge bg-danger fs-6">Inactive</span>
+          {% elif job.is_open %}
+            <span class="badge bg-success fs-6">Open</span>
+          {% else %}
+            <span class="badge bg-secondary fs-6">Closed</span>
+          {% endif %}
+        </div>
+
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="badge bg-secondary">{{ job.get_job_type_display }}</span>
+          {% if job.location %}
+            <span class="badge bg-info"><i class="bi bi-geo-alt me-1"></i>{{ job.location }}</span>
+          {% endif %}
+          {% if job.salary_range %}
+            <span class="badge bg-success"><i class="bi bi-currency-rupee me-1"></i>{{ job.salary_range }}</span>
+          {% endif %}
+        </div>
+
+        <hr />
+
+        <h5 class="mb-3">Job Description</h5>
+        <p class="text-muted" style="white-space: pre-line;">{{ job.description }}</p>
+
+        {% if job.requirements %}
+        <hr />
+        <h5 class="mb-3">Requirements</h5>
+        <p class="text-muted" style="white-space: pre-line;">{{ job.requirements }}</p>
+        {% endif %}
+
+        <hr />
+
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            {% if job.last_date %}
+              <small class="text-muted">
+                <i class="bi bi-clock me-1"></i>Apply by {{ job.last_date|date:"d M Y" }}
+              </small>
+            {% endif %}
+          </div>
+          <div class="d-flex gap-2">
+            {% if job.apply_link %}
+              <a href="{{ job.apply_link }}" target="_blank" class="btn btn-success">
+                <i class="bi bi-box-arrow-up-right me-1"></i>Apply Now
+              </a>
+            {% endif %}
+            {% if user.is_admin_role %}
+              <a href="{% url 'job_edit' job.id %}" class="btn btn-warning">
+                <i class="bi bi-pencil me-1"></i>Edit
+              </a>
+              <a href="{% url 'job_delete' job.id %}" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i>Delete
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referral Form (Alumni only) -->
+    {% if not user.is_admin_role and job.is_open %}
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h6 class="mb-0">
+          <i class="bi bi-person-plus me-2"></i>Refer Someone for This Job
+        </h6>
+      </div>
+      <div class="card-body p-4">
+        <form method="post" action="{% url 'job_refer' job.id %}">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Referee Name <span class="text-danger">*</span></label>
+              {{ referral_form.referee_name }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Referee Email <span class="text-danger">*</span></label>
+              {{ referral_form.referee_email }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Note (Optional)</label>
+            {{ referral_form.note }}
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-send me-1"></i>Submit Referral
+          </button>
+        </form>
+
+        {% if user_referrals %}
+        <hr />
+        <h6 class="mb-3">Your Referrals</h6>
+        <div class="list-group">
+          {% for ref in user_referrals %}
+          <div class="list-group-item">
+            <div class="d-flex justify-content-between">
+              <div>
+                <strong>{{ ref.referee_name }}</strong>
+                <div class="small text-muted">{{ ref.referee_email }}</div>
+                {% if ref.note %}
+                  <div class="small text-muted mt-1">{{ ref.note }}</div>
+                {% endif %}
+              </div>
+              <small class="text-muted">{{ ref.referred_at|date:"d M Y" }}</small>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="mb-3">Job Info</h6>
+        <div class="mb-2">
+          <small class="text-muted">Company</small>
+          <div class="fw-semibold">{{ job.company }}</div>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">Job Type</small>
+          <div class="fw-semibold">{{ job.get_job_type_display }}</div>
+        </div>
+        {% if job.location %}
+        <div class="mb-2">
+          <small class="text-muted">Location</small>
+          <div class="fw-semibold">{{ job.location }}</div>
+        </div>
+        {% endif %}
+        {% if job.salary_range %}
+        <div class="mb-2">
+          <small class="text-muted">Salary Range</small>
+          <div class="fw-semibold">{{ job.salary_range }}</div>
+        </div>
+        {% endif %}
+        <div class="mb-2">
+          <small class="text-muted">Posted By</small>
+          <div class="fw-semibold">{{ job.posted_by.get_full_name|default:"Admin" }}</div>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">Posted On</small>
+          <div class="fw-semibold">{{ job.created_at|date:"d M Y" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

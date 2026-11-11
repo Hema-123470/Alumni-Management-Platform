@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Job — Alumni Management System{% endblock %}
+{% block nav_jobs %}active{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'job_list' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back to Jobs
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+          <i class="bi bi-briefcase-fill me-2"></i>{{ action }} Job
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Job Title <span class="text-danger">*</span></label>
+            {{ form.title }}
+            {% if form.title.errors %}
+              <div class="text-danger small">{{ form.title.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Company <span class="text-danger">*</span></label>
+              {{ form.company }}
+              {% if form.company.errors %}
+                <div class="text-danger small">{{ form.company.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Location</label>
+              {{ form.location }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Job Type</label>
+              {{ form.job_type }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Salary Range</label>
+              {{ form.salary_range }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Job Description <span class="text-danger">*</span></label>
+            {{ form.description }}
+            {% if form.description.errors %}
+              <div class="text-danger small">{{ form.description.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Requirements</label>
+            {{ form.requirements }}
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Apply Link</label>
+              {{ form.apply_link }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Last Date to Apply</label>
+              {{ form.last_date }}
+            </div>
+          </div>
+
+          <div class="form-check mb-3">
+            {{ form.is_active }}
+            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+              Active (visible to alumni)
+            </label>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>{{ action }} Job
+            </button>
+            <a href="{% url 'job_list' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

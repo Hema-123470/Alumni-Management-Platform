@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Make a Donation — Alumni Management System{% endblock %}
+{% block nav_donations %}active{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'donation_list' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back to Donations
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-sm">
+      <div class="card-header bg-danger text-white">
+        <h5 class="mb-0">
+          <i class="bi bi-heart-fill me-2"></i>Make a Donation
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <p class="text-muted mb-4">
+          Your generous contribution helps us support alumni initiatives, scholarships, and community programs.
+        </p>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Amount (₹) <span class="text-danger">*</span></label>
+            {{ form.amount }}
+            {% if form.amount.errors %}
+              <div class="text-danger small">{{ form.amount.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Donation Type</label>
+            {{ form.donation_type }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Purpose (Optional)</label>
+            {{ form.purpose }}
+            <small class="text-muted d-block">e.g., Scholarship Fund, Infrastructure Development</small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Message (Optional)</label>
+            {{ form.message }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Payment Method</label>
+            {{ form.payment_method }}
+          </div>
+
+          <div class="form-check mb-4">
+            {{ form.is_anonymous }}
+            <label class="form-check-label" for="{{ form.is_anonymous.id_for_label }}">
+              Make this donation anonymous
+            </label>
+          </div>
+
+          <div class="alert alert-info small">
+            <i class="bi bi-info-circle me-1"></i>
+            This is a demo system. No actual payment will be processed.
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-danger btn-lg">
+              <i class="bi bi-heart-fill me-1"></i>Donate Now
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

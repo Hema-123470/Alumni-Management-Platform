@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Alumni Management System{% endblock %}</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #1a3c6e;
+      --accent:  #f0a500;
+    }
+
+    body {
+      background-color: #f4f6f9;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* ── Navbar ── */
+    .navbar {
+      background-color: var(--primary) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,.25);
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #fff !important;
+    }
+    .navbar-brand span { color: var(--accent); }
+    .nav-link { color: rgba(255,255,255,.85) !important; }
+    .nav-link:hover { color: var(--accent) !important; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      min-height: calc(100vh - 56px);
+      background-color: var(--primary);
+      padding-top: 1rem;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.75);
+      border-radius: 6px;
+      margin: 2px 8px;
+      padding: 10px 16px;
+      transition: background .2s;
+    }
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      background-color: rgba(255,255,255,.15);
+      color: #fff !important;
+    }
+    .sidebar .nav-link i { margin-right: 8px; }
+
+    /* ── Cards ── */
+    .stat-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.08);
+      transition: transform .2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); }
+
+    /* ── Auth pages ── */
+    .auth-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary) 0%, #2d6a9f 100%);
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 460px;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.25);
+    }
+    .auth-card .card-header {
+      background-color: var(--primary);
+      border-radius: 16px 16px 0 0;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .btn-primary-custom {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .btn-primary-custom:hover {
+      background-color: #142d52;
+      border-color: #142d52;
+      color: #fff;
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<!-- ── Navbar ── -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'dashboard' %}">
+      <i class="bi bi-mortarboard-fill me-2"></i>Alumni<span>MS</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <span class="nav-link text-white-50">
+            <i class="bi bi-person-circle me-1"></i>{{ user.get_full_name }} 
+            <span class="badge bg-warning text-dark ms-1">{{ user.role|title }}</span>
+          </span>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-right me-1"></i>Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main Layout ── -->
+<div class="container-fluid">
+  <div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-2 sidebar d-none d-md-block">
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link {% block nav_dashboard %}{% endblock %}" href="{% url 'dashboard' %}">
+            <i class="bi bi-speedometer2"></i>Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_profile %}{% endblock %}" href="{% url 'my_profile' %}">
+            <i class="bi bi-person-circle"></i>My Profile
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_events %}{% endblock %}" href="{% url 'event_list' %}">
+            <i class="bi bi-calendar-event"></i>Events
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_jobs %}{% endblock %}" href="{% url 'job_list' %}">
+            <i class="bi bi-briefcase"></i>Jobs
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_donations %}{% endblock %}" href="{% url 'donation_list' %}">
+            <i class="bi bi-heart"></i>Donations
+          </a>
+        </li>
+        {% if user.is_admin_role %}
+        <hr class="text-white-50 mx-3 my-1" />
+        <li class="nav-item">
+          <small class="text-white-50 px-3 text-uppercase" style="font-size:.7rem;letter-spacing:.08em;">Admin</small>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_reports %}{% endblock %}" href="{% url 'reports_dashboard' %}">
+            <i class="bi bi-bar-chart"></i>Reports
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_approvals %}{% endblock %}" href="{% url 'pending_approvals' %}">
+            <i class="bi bi-person-check"></i>Approvals
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_alumni_list %}{% endblock %}" href="{% url 'alumni_list' %}">
+            <i class="bi bi-people"></i>Alumni Directory
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% block nav_sponsorships %}{% endblock %}" href="{% url 'sponsorship_list' %}">
+            <i class="bi bi-award"></i>Sponsorships
+          </a>
+        </li>
+        {% endif %}
+        <hr class="text-white-50 mx-3" />
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-right"></i>Logout
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="col-md-10 p-4">
+      <!-- Flash messages -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+{% else %}
+<!-- Unauthenticated: just render the block -->
+{% block auth_content %}{% endblock %}
+{% endif %}
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

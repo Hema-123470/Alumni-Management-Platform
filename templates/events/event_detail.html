@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ event.title }} — Event Details{% endblock %}
+{% block nav_events %}active{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'event_list' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back to Events
+  </a>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      {% if event.banner %}
+        <img src="{{ event.banner.url }}" class="card-img-top" alt="{{ event.title }}" style="max-height:350px;object-fit:cover;">
+      {% endif %}
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <h3 class="mb-0">{{ event.title }}</h3>
+          {% if not event.is_active %}
+            <span class="badge bg-secondary fs-6">Inactive</span>
+          {% elif event.is_upcoming %}
+            <span class="badge bg-success fs-6">Upcoming</span>
+          {% else %}
+            <span class="badge bg-secondary fs-6">Past</span>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <span class="badge bg-primary">{{ event.get_event_type_display }}</span>
+        </div>
+
+        <div class="mb-3">
+          <h6><i class="bi bi-calendar3 me-2 text-primary"></i>Date & Time</h6>
+          <p class="text-muted mb-0">{{ event.event_date|date:"l, d F Y" }} at {{ event.event_date|date:"h:i A" }}</p>
+        </div>
+
+        {% if event.venue %}
+        <div class="mb-3">
+          <h6><i class="bi bi-geo-alt me-2 text-danger"></i>Venue</h6>
+          <p class="text-muted mb-0">{{ event.venue }}</p>
+        </div>
+        {% endif %}
+
+        {% if event.last_date_to_register %}
+        <div class="mb-3">
+          <h6><i class="bi bi-clock me-2 text-warning"></i>Registration Deadline</h6>
+          <p class="text-muted mb-0">{{ event.last_date_to_register|date:"d M Y" }}</p>
+        </div>
+        {% endif %}
+
+        <hr />
+
+        <h5 class="mb-3">Description</h5>
+        <p class="text-muted" style="white-space: pre-line;">{{ event.description }}</p>
+
+        <hr />
+
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <small class="text-muted">
+              <i class="bi bi-people me-1"></i>{{ registrations_count }} registered
+            </small>
+          </div>
+          {% if user.is_admin_role %}
+            <div class="d-flex gap-2">
+              <a href="{% url 'event_edit' event.id %}" class="btn btn-warning">
+                <i class="bi bi-pencil me-1"></i>Edit
+              </a>
+              <a href="{% url 'event_delete' event.id %}" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i>Delete
+              </a>
+            </div>
+          {% elif event.registration_open and not is_registered %}
+            <a href="{% url 'event_register' event.id %}" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>Register Now
+            </a>
+          {% elif is_registered %}
+            <span class="btn btn-success disabled">
+              <i class="bi bi-check-circle me-1"></i>You're Registered
+            </span>
+          {% else %}
+            <span class="btn btn-secondary disabled">Registration Closed</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="mb-3">Event Info</h6>
+        <div class="mb-2">
+          <small class="text-muted">Type</small>
+          <div class="fw-semibold">{{ event.get_event_type_display }}</div>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">Status</small>
+          <div class="fw-semibold">
+            {% if event.is_active %}
+              <span class="text-success">Active</span>
+            {% else %}
+              <span class="text-secondary">Inactive</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">Created By</small>
+          <div class="fw-semibold">{{ event.created_by.get_full_name|default:"Admin" }}</div>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">Posted On</small>
+          <div class="fw-semibold">{{ event.created_at|date:"d M Y" }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

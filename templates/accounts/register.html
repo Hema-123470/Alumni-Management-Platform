@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Register — Alumni Management System{% endblock %}
+
+{% block auth_content %}
+<div class="auth-wrapper py-5">
+  <div class="auth-card card" style="max-width: 540px;">
+
+    <div class="card-header">
+      <i class="bi bi-person-plus-fill text-warning fs-2"></i>
+      <h4 class="text-white mt-2 mb-0">Create Alumni Account</h4>
+      <p class="text-white-50 small mb-0">Registration requires admin approval</p>
+    </div>
+
+    <div class="card-body p-4">
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show py-2" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <div class="row">
+          <!-- First Name -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+              <div class="text-danger small mt-1">{{ form.first_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+          <!-- Last Name -->
+          <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Last Name <span class="text-danger">*</span></label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+              <div class="text-danger small mt-1">{{ form.last_name.errors.0 }}</div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Username -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
+          {{ form.username }}
+          {% if form.username.errors %}
+            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Phone -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Phone Number</label>
+          {{ form.phone }}
+          {% if form.phone.errors %}
+            <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
+          {{ form.password1 }}
+          {% if form.password1.errors %}
+            <div class="text-danger small mt-1">{{ form.password1.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Confirm Password <span class="text-danger">*</span></label>
+          {{ form.password2 }}
+          {% if form.password2.errors %}
+            <div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>
+          {% endif %}
+        </div>
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger py-2">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+
+        <!-- Info notice -->
+        <div class="alert alert-info py-2 small">
+          <i class="bi bi-info-circle me-1"></i>
+          Your account will be reviewed by an admin before you can log in.
+        </div>
+
+        <div class="d-grid mt-3">
+          <button type="submit" class="btn btn-primary-custom btn-lg">
+            <i class="bi bi-person-check me-2"></i>Register
+          </button>
+        </div>
+      </form>
+
+      <hr />
+      <p class="text-center text-muted mb-0">
+        Already have an account?
+        <a href="{% url 'login' %}" class="fw-semibold text-decoration-none">Sign in here</a>
+      </p>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

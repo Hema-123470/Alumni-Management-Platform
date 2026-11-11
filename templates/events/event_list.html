@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}Events — Alumni Management System{% endblock %}
+{% block nav_events %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="mb-1">
+      <i class="bi bi-calendar-event me-2 text-success"></i>Events
+    </h3>
+    <p class="text-muted mb-0">Upcoming and past alumni events</p>
+  </div>
+  {% if user.is_admin_role %}
+    <a href="{% url 'event_create' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Create Event
+    </a>
+  {% endif %}
+</div>
+
+{% if events %}
+<div class="row g-4">
+  {% for event in events %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow-sm h-100">
+      {% if event.banner %}
+        <img src="{{ event.banner.url }}" class="card-img-top" alt="{{ event.title }}" style="height:180px;object-fit:cover;">
+      {% else %}
+        <div class="card-img-top bg-gradient d-flex align-items-center justify-content-center text-white"
+             style="height:180px;background:linear-gradient(135deg,#1a3c6e,#2d6a9f);">
+          <i class="bi bi-calendar-event" style="font-size:4rem;opacity:.3;"></i>
+        </div>
+      {% endif %}
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h6 class="mb-0">{{ event.title }}</h6>
+          {% if not event.is_active %}
+            <span class="badge bg-secondary">Inactive</span>
+          {% elif event.is_upcoming %}
+            <span class="badge bg-success">Upcoming</span>
+          {% else %}
+            <span class="badge bg-secondary">Past</span>
+          {% endif %}
+        </div>
+        <p class="text-muted small mb-2">
+          <i class="bi bi-calendar3 me-1"></i>{{ event.event_date|date:"d M Y, h:i A" }}
+        </p>
+        {% if event.venue %}
+          <p class="text-muted small mb-2">
+            <i class="bi bi-geo-alt me-1"></i>{{ event.venue }}
+          </p>
+        {% endif %}
+        <p class="text-muted small">{{ event.description|truncatewords:15 }}</p>
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'event_detail' event.id %}" class="btn btn-sm btn-outline-primary flex-fill">
+            <i class="bi bi-eye me-1"></i>View
+          </a>
+          {% if user.is_admin_role %}
+            <a href="{% url 'event_edit' event.id %}" class="btn btn-sm btn-outline-warning">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'event_delete' event.id %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </a>
+          {% elif event.id in registered_ids %}
+            <span class="btn btn-sm btn-success disabled">
+              <i class="bi bi-check-lg me-1"></i>Registered
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  <i class="bi bi-info-circle me-2"></i>No events available.
+  {% if user.is_admin_role %}
+    <a href="{% url 'event_create' %}" class="alert-link">Create one now</a>.
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

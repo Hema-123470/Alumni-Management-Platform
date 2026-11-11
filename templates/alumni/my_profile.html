@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile — Alumni Management System{% endblock %}
+{% block nav_profile %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="mb-1">
+      <i class="bi bi-person-circle me-2 text-primary"></i>My Profile
+    </h3>
+    <p class="text-muted mb-0">Update your alumni profile information</p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <!-- Academic Info -->
+          <h5 class="border-bottom pb-2 mb-3">
+            <i class="bi bi-mortarboard me-2 text-primary"></i>Academic Information
+          </h5>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Batch Year</label>
+              {{ form.batch_year }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Department</label>
+              {{ form.department }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Degree</label>
+              {{ form.degree }}
+            </div>
+          </div>
+
+          <!-- Professional Info -->
+          <h5 class="border-bottom pb-2 mb-3 mt-4">
+            <i class="bi bi-briefcase me-2 text-success"></i>Professional Information
+          </h5>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Current Company</label>
+              {{ form.current_company }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Designation</label>
+              {{ form.designation }}
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Industry</label>
+              {{ form.industry }}
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">LinkedIn URL</label>
+              {{ form.linkedin_url }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Skills</label>
+            {{ form.skills }}
+            <small class="text-muted">Comma-separated (e.g., Python, Django, MySQL)</small>
+          </div>
+
+          <!-- Personal Info -->
+          <h5 class="border-bottom pb-2 mb-3 mt-4">
+            <i class="bi bi-geo-alt me-2 text-warning"></i>Personal Information
+          </h5>
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">City</label>
+              {{ form.city }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">State</label>
+              {{ form.state }}
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Country</label>
+              {{ form.country }}
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Bio</label>
+            {{ form.bio }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Profile Picture</label>
+            {{ form.profile_picture }}
+            {% if profile.profile_picture %}
+              <div class="mt-2">
+                <img src="{{ profile.profile_picture.url }}" alt="Profile" class="img-thumbnail" style="max-width:150px;">
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>Save Changes
+            </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center p-4">
+        {% if profile.profile_picture %}
+          <img src="{{ profile.profile_picture.url }}" alt="Profile" class="rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;">
+        {% else %}
+          <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+               style="width:120px;height:120px;font-size:3rem;">
+            {{ user.first_name|first|upper }}
+          </div>
+        {% endif %}
+        <h5 class="mb-1">{{ user.get_full_name }}</h5>
+        <p class="text-muted small mb-2">{{ user.email }}</p>
+        <span class="badge bg-primary">{{ user.role|title }}</span>
+        <hr />
+        <div class="text-start small">
+          <div class="mb-2">
+            <i class="bi bi-calendar3 me-2 text-muted"></i>
+            <strong>Joined:</strong> {{ user.date_joined|date:"M Y" }}
+          </div>
+          <div class="mb-2">
+            <i class="bi bi-clock me-2 text-muted"></i>
+            <strong>Updated:</strong> {{ profile.updated_at|date:"d M Y" }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

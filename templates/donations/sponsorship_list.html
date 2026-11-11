@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Sponsorships — Alumni Management System{% endblock %}
+{% block nav_sponsorships %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h3 class="mb-1">
+      <i class="bi bi-award me-2 text-warning"></i>Sponsorships
+    </h3>
+    <p class="text-muted mb-0">Our valued sponsors and partners</p>
+  </div>
+  {% if user.is_admin_role %}
+    <a href="{% url 'sponsorship_create' %}" class="btn btn-primary">
+      <i class="bi bi-plus-lg me-1"></i>Add Sponsorship
+    </a>
+  {% endif %}
+</div>
+
+{% if sponsorships %}
+<div class="row g-4">
+  {% for sponsor in sponsorships %}
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow-sm h-100">
+      <div class="card-body text-center">
+        {% if sponsor.logo %}
+          <img src="{{ sponsor.logo.url }}" alt="{{ sponsor.sponsor_name }}" 
+               class="mb-3" style="max-width:120px;max-height:80px;object-fit:contain;">
+        {% else %}
+          <div class="bg-light rounded d-inline-flex align-items-center justify-content-center mb-3"
+               style="width:120px;height:80px;">
+            <i class="bi bi-building text-muted fs-1"></i>
+          </div>
+        {% endif %}
+        
+        <h6 class="mb-1">{{ sponsor.sponsor_name }}</h6>
+        {% if sponsor.company %}
+          <p class="text-muted small mb-2">{{ sponsor.company }}</p>
+        {% endif %}
+        
+        <div class="mb-2">
+          {% if sponsor.sponsorship_type == 'platinum' %}
+            <span class="badge" style="background:#E5E4E2;">Platinum</span>
+          {% elif sponsor.sponsorship_type == 'gold' %}
+            <span class="badge" style="background:#FFD700;color:#000;">Gold</span>
+          {% elif sponsor.sponsorship_type == 'silver' %}
+            <span class="badge" style="background:#C0C0C0;color:#000;">Silver</span>
+          {% else %}
+            <span class="badge" style="background:#CD7F32;">Bronze</span>
+          {% endif %}
+        </div>
+        
+        <p class="fw-bold text-success mb-2">₹{{ sponsor.amount|floatformat:0 }}</p>
+        
+        {% if sponsor.purpose %}
+          <p class="text-muted small mb-2">{{ sponsor.purpose }}</p>
+        {% endif %}
+        
+        <hr />
+        
+        <div class="d-flex justify-content-center gap-2">
+          {% if sponsor.website_url %}
+            <a href="{{ sponsor.website_url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-globe me-1"></i>Website
+            </a>
+          {% endif %}
+          {% if user.is_admin_role %}
+            <a href="{% url 'sponsorship_edit' sponsor.id %}" class="btn btn-sm btn-outline-warning">
+              <i class="bi bi-pencil"></i>
+            </a>
+            <a href="{% url 'sponsorship_delete' sponsor.id %}" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-trash"></i>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+  <i class="bi bi-info-circle me-2"></i>No sponsorships yet.
+  {% if user.is_admin_role %}
+    <a href="{% url 'sponsorship_create' %}" class="alert-link">Add one now</a>.
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

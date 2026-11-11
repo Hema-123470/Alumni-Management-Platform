@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Sponsorship — Alumni Management System{% endblock %}
+{% block nav_sponsorships %}active{% endblock %}
+
+{% block content %}
+<div class="mb-3">
+  <a href="{% url 'sponsorship_list' %}" class="btn btn-sm btn-outline-secondary">
+    <i class="bi bi-arrow-left me-1"></i>Back to Sponsorships
+  </a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">
+          <i class="bi bi-award-fill me-2"></i>{{ action }} Sponsorship
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Sponsor Name <span class="text-danger">*</span></label>
+              {{ form.sponsor_name }}
+              {% if form.sponsor_name.errors %}
+                <div class="text-danger small">{{ form.sponsor_name.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Company</label>
+              {{ form.company }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+              {{ form.sponsor_email }}
+              {% if form.sponsor_email.errors %}
+                <div class="text-danger small">{{ form.sponsor_email.errors.0 }}</div>
+              {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Phone</label>
+              {{ form.sponsor_phone }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Sponsorship Type</label>
+              {{ form.sponsorship_type }}
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Amount (₹) <span class="text-danger">*</span></label>
+              {{ form.amount }}
+              {% if form.amount.errors %}
+                <div class="text-danger small">{{ form.amount.errors.0 }}</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Purpose</label>
+            {{ form.purpose }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Description</label>
+            {{ form.description }}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Logo</label>
+            {{ form.logo }}
+            {% if sponsorship.logo %}
+              <div class="mt-2">
+                <img src="{{ sponsorship.logo.url }}" alt="Logo" class="img-thumbnail" style="max-width:150px;">
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Website URL</label>
+            {{ form.website_url }}
+          </div>
+
+          <div class="form-check mb-3">
+            {{ form.is_active }}
+            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+              Active (visible to all users)
+            </label>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-lg me-1"></i>{{ action }} Sponsorship
+            </button>
+            <a href="{% url 'sponsorship_list' %}" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
